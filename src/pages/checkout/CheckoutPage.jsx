@@ -81,8 +81,8 @@ export default function CheckoutPage() {
   if (loading) return <LoadingSpinner text="Loading checkout..." />
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-display font-bold text-gray-900 mb-8">Checkout</h1>
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-6 sm:mb-8">Checkout</h1>
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
@@ -95,7 +95,7 @@ export default function CheckoutPage() {
             </div>
 
             {showAddrForm && (
-              <form onSubmit={handleAddAddress} className="grid grid-cols-2 gap-3 mb-4 p-4 bg-gray-50 rounded-lg">
+              <form onSubmit={handleAddAddress} className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 p-4 bg-gray-50 rounded-lg">
                 <input placeholder="Full Name" required value={addrForm.fullName} onChange={(e) => setAddrForm({ ...addrForm, fullName: e.target.value })} className="border rounded-lg px-3 py-2 text-sm" />
                 <input placeholder="Phone" required value={addrForm.phone} onChange={(e) => setAddrForm({ ...addrForm, phone: e.target.value })} className="border rounded-lg px-3 py-2 text-sm" />
                 <input placeholder="Address Line 1" required value={addrForm.addressLine1} onChange={(e) => setAddrForm({ ...addrForm, addressLine1: e.target.value })} className="col-span-2 border rounded-lg px-3 py-2 text-sm" />

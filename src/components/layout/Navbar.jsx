@@ -41,15 +41,16 @@ export default function Navbar() {
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white shadow-sm'}`}>
       {/* Top bar */}
-      <div className="gradient-primary text-white text-center text-xs py-1.5 font-medium tracking-wide">
-        ✨ Free Shipping on Orders Above ₹999 | Use Code <span className="font-bold">GRACE10</span> for 10% Off ✨
+      <div className="gradient-primary text-white text-center text-xs py-1.5 font-medium tracking-wide px-2">
+        <span className="hidden sm:inline">✨ Free Shipping on Orders Above ₹999 | Use Code <span className="font-bold">GRACE10</span> for 10% Off ✨</span>
+        <span className="sm:hidden">Free Shipping ₹999+ | Code <span className="font-bold">GRACE10</span> — 10% Off</span>
       </div>
 
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold font-display text-gradient">SareeGrace</span>
+            <span className="text-xl sm:text-2xl font-bold font-display text-gradient">SareeGrace</span>
           </Link>
 
           {/* Desktop nav */}
@@ -73,9 +74,9 @@ export default function Navbar() {
           </form>
 
           {/* Icons */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Link to="/wishlist" className="relative text-gray-700 hover:text-primary transition">
-              <FiHeart size={22} />
+              <FiHeart size={20} />
               {wishItems.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-primary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                   {wishItems.length}
@@ -83,7 +84,7 @@ export default function Navbar() {
               )}
             </Link>
             <Link to="/cart" className="relative text-gray-700 hover:text-primary transition">
-              <FiShoppingCart size={22} />
+              <FiShoppingCart size={20} />
               {totalItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-primary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                   {totalItems}
@@ -135,6 +136,23 @@ export default function Navbar() {
             <Link to="/shop" onClick={() => setMenuOpen(false)} className="block py-2 text-gray-700 font-medium">Shop</Link>
             <Link to="/shop?isSpecialOffer=true" onClick={() => setMenuOpen(false)} className="block py-2 text-gray-700 font-medium">Special Offers</Link>
             <Link to="/new-arrivals" onClick={() => setMenuOpen(false)} className="block py-2 text-gray-700 font-medium">New Arrivals</Link>
+            {user && (
+              <>
+                <hr />
+                <Link to="/profile" onClick={() => setMenuOpen(false)} className="block py-2 text-gray-700 font-medium">My Profile</Link>
+                <Link to="/orders" onClick={() => setMenuOpen(false)} className="block py-2 text-gray-700 font-medium">My Orders</Link>
+                <Link to="/addresses" onClick={() => setMenuOpen(false)} className="block py-2 text-gray-700 font-medium">Addresses</Link>
+                {user.role === 'Admin' && (
+                  <Link to="/admin" onClick={() => setMenuOpen(false)} className="block py-2 text-primary font-medium">Admin Panel</Link>
+                )}
+                <button onClick={() => { handleLogout(); setMenuOpen(false) }} className="flex items-center gap-2 py-2 text-red-600 font-medium">
+                  <FiLogOut size={14} /> Logout
+                </button>
+              </>
+            )}
+            {!user && (
+              <Link to="/login" onClick={() => setMenuOpen(false)} className="block bg-primary text-white text-center px-4 py-2.5 rounded-full text-sm font-medium">Login / Register</Link>
+            )}
           </div>
         )}
       </nav>

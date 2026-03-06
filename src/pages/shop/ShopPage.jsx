@@ -107,28 +107,108 @@ export default function ShopPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-3xl font-display font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900">
             {filters.isNewArrival ? 'New Arrivals' : filters.search ? `Results for "${filters.search}"` : 'All Sarees'}
           </h1>
           <p className="text-gray-500 text-sm mt-1">{totalCount} products found</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <button onClick={() => setShowFilters(!showFilters)}
-            className="md:hidden flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium">
-            <FiFilter /> Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
+            className="md:hidden flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium bg-white">
+            <FiFilter size={15} /> Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
           </button>
           <select value={filters.sortBy} onChange={(e) => updateFilter('sortBy', e.target.value)}
-            className="border rounded-lg px-3 py-2 text-sm bg-white">
+            className="border rounded-lg px-3 py-2 text-sm bg-white flex-1 sm:flex-none">
             {SORT_OPTIONS.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
           </select>
         </div>
       </div>
 
+      {/* Mobile Filter Drawer Overlay */}
+      {showFilters && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowFilters(false)} />
+          <div className="absolute right-0 top-0 h-full w-[85vw] max-w-sm bg-white shadow-2xl overflow-y-auto">
+            <div className="flex justify-between items-center px-5 py-4 border-b sticky top-0 bg-white z-10">
+              <h3 className="font-display font-semibold text-lg">Filters {activeFilterCount > 0 && <span className="text-primary text-sm ml-1">({activeFilterCount})</span>}</h3>
+              <div className="flex items-center gap-3">
+                {activeFilterCount > 0 && (
+                  <button onClick={clearFilters} className="text-xs text-primary hover:underline">Clear All</button>
+                )}
+                <button onClick={() => setShowFilters(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+                  <FiX size={20} />
+                </button>
+              </div>
+            </div>
+            <div className="px-5 py-4 space-y-6">
+              <FilterSection title="Category">
+                <select value={filters.categoryId} onChange={(e) => updateFilter('categoryId', e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2 text-sm">
+                  <option value="">All Categories</option>
+                  {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </FilterSection>
+              <FilterSection title="Fabric Type">
+                <div className="flex flex-wrap gap-2">
+                  {fabricTypes.map((f) => (
+                    <button key={f} onClick={() => updateFilter('fabricType', filters.fabricType === f ? '' : f)}
+                      className={`text-xs px-3 py-1.5 rounded-full border transition ${filters.fabricType === f ? 'bg-primary text-white border-primary' : 'hover:border-primary'}`}>
+                      {f}
+                    </button>
+                  ))}
+                </div>
+              </FilterSection>
+              <FilterSection title="Color">
+                <div className="flex flex-wrap gap-2">
+                  {colors.map((c) => (
+                    <button key={c} onClick={() => updateFilter('color', filters.color === c ? '' : c)}
+                      className={`text-xs px-3 py-1.5 rounded-full border transition ${filters.color === c ? 'bg-primary text-white border-primary' : 'hover:border-primary'}`}>
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </FilterSection>
+              <FilterSection title="Occasion">
+                <div className="flex flex-wrap gap-2">
+                  {occasions.map((o) => (
+                    <button key={o} onClick={() => updateFilter('occasion', filters.occasion === o ? '' : o)}
+                      className={`text-xs px-3 py-1.5 rounded-full border transition ${filters.occasion === o ? 'bg-primary text-white border-primary' : 'hover:border-primary'}`}>
+                      {o}
+                    </button>
+                  ))}
+                </div>
+              </FilterSection>
+              <FilterSection title="Price Range">
+                <div className="flex gap-2">
+                  <input type="number" placeholder="Min" value={filters.minPrice}
+                    onChange={(e) => updateFilter('minPrice', e.target.value)}
+                    className="w-1/2 border rounded-lg px-2 py-1.5 text-sm" />
+                  <input type="number" placeholder="Max" value={filters.maxPrice}
+                    onChange={(e) => updateFilter('maxPrice', e.target.value)}
+                    className="w-1/2 border rounded-lg px-2 py-1.5 text-sm" />
+                </div>
+              </FilterSection>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={filters.isSpecialOffer === 'true'}
+                  onChange={(e) => updateFilter('isSpecialOffer', e.target.checked ? 'true' : '')}
+                  className="w-4 h-4 text-primary rounded" />
+                <span className="text-sm text-gray-700">Special Offers Only</span>
+              </label>
+            </div>
+            <div className="px-5 pb-8 pt-2">
+              <button onClick={() => setShowFilters(false)} className="w-full bg-primary text-white py-3 rounded-lg font-semibold">
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex gap-8">
-        {/* Sidebar Filters */}
-        <aside className={`w-64 shrink-0 ${showFilters ? 'block' : 'hidden'} md:block`}>
+        {/* Desktop Sidebar Filters — hidden on mobile (drawer used instead) */}
+        <aside className="w-64 shrink-0 hidden md:block">
           <div className="bg-white rounded-xl p-5 shadow-sm sticky top-24 space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="font-display font-semibold text-lg">Filters</h3>
@@ -215,7 +295,7 @@ export default function ShopPage() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">{products.map((p) => <ProductCard key={p.id} product={p} />)}</div>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">{products.map((p) => <ProductCard key={p.id} product={p} />)}</div>
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-2 mt-10">

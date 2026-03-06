@@ -33,8 +33,8 @@ export default function LoginPage() {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="gradient-primary p-8 text-center saree-pattern">
-            <h1 className="text-3xl font-display font-bold text-white mb-1">
+          <div className="gradient-primary p-6 sm:p-8 text-center saree-pattern">
+            <h1 className="text-2xl sm:text-3xl font-display font-bold text-white mb-1">
               {isRegister ? 'Create Account' : 'Welcome Back'}
             </h1>
             <p className="text-white/70 text-sm">
@@ -42,7 +42,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-8 space-y-4">
+          <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-4">
             {isRegister && (
               <div className="grid grid-cols-2 gap-3">
                 <InputField icon={FiUser} placeholder="First Name" value={form.firstName}

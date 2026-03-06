@@ -186,7 +186,7 @@ export default function ProductDetailPage() {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         {/* Breadcrumb */}
         <nav className="text-xs text-gray-500 mb-5 flex items-center gap-1 flex-wrap">
           <Link to="/" className="hover:text-primary">Home</Link>
@@ -201,57 +201,54 @@ export default function ProductDetailPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* ── Col 1: Image Gallery ── */}
           <div className="lg:w-5/12">
-            {/* Thumbnails + Main image */}
-            <div className="flex gap-3">
-              {/* Thumbnail column */}
+            {/* Main image */}
+            <div className="relative rounded-xl overflow-hidden bg-white shadow-md aspect-[3/4] group cursor-zoom-in"
+              onClick={() => setIsZoomed(true)}>
+              <AnimatePresence mode="wait">
+                <motion.img key={activeImg} src={images[activeImg]?.imageUrl}
+                  alt={images[activeImg]?.altText || product.name}
+                  className="w-full h-full object-cover"
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} />
+              </AnimatePresence>
+
+              {/* Prev/Next arrows */}
               {images.length > 1 && (
-                <div className="flex flex-col gap-2 w-16 shrink-0">
-                  {images.map((img, i) => (
-                    <button key={i} onMouseEnter={() => setActiveImg(i)} onClick={() => setActiveImg(i)}
-                      className={`w-16 h-20 rounded border-2 overflow-hidden transition ${activeImg === i ? 'border-primary shadow' : 'border-gray-200 opacity-70 hover:opacity-100'}`}>
-                      <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <button onClick={(e) => { e.stopPropagation(); setActiveImg((p) => (p - 1 + images.length) % images.length) }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition">
+                    <FiChevronLeft size={18} />
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); setActiveImg((p) => (p + 1) % images.length) }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition">
+                    <FiChevronRight size={18} />
+                  </button>
+                </>
               )}
 
-              {/* Main image */}
-              <div className="relative flex-1 rounded-xl overflow-hidden bg-white shadow-md aspect-[3/4] group cursor-zoom-in"
-                onClick={() => setIsZoomed(true)}>
-                <AnimatePresence mode="wait">
-                  <motion.img key={activeImg} src={images[activeImg]?.imageUrl}
-                    alt={images[activeImg]?.altText || product.name}
-                    className="w-full h-full object-cover"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} />
-                </AnimatePresence>
-
-                {/* Prev/Next arrows */}
-                {images.length > 1 && (
-                  <>
-                    <button onClick={(e) => { e.stopPropagation(); setActiveImg((p) => (p - 1 + images.length) % images.length) }}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition">
-                      <FiChevronLeft size={18} />
-                    </button>
-                    <button onClick={(e) => { e.stopPropagation(); setActiveImg((p) => (p + 1) % images.length) }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition">
-                      <FiChevronRight size={18} />
-                    </button>
-                  </>
-                )}
-
-                {/* Zoom hint */}
-                <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition pointer-events-none">
-                  <FiZoomIn size={12} /> Zoom
-                </div>
-
-                {/* Discount badge */}
-                {product.discountPercent > 0 && (
-                  <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                    -{product.discountPercent}% OFF
-                  </span>
-                )}
+              {/* Zoom hint */}
+              <div className="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition pointer-events-none">
+                <FiZoomIn size={12} /> Zoom
               </div>
+
+              {/* Discount badge */}
+              {product.discountPercent > 0 && (
+                <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                  -{product.discountPercent}% OFF
+                </span>
+              )}
             </div>
+
+            {/* Thumbnails — horizontal scrollable row */}
+            {images.length > 1 && (
+              <div className="flex gap-2 mt-3 overflow-x-auto pb-1 scrollbar-thin">
+                {images.map((img, i) => (
+                  <button key={i} onMouseEnter={() => setActiveImg(i)} onClick={() => setActiveImg(i)}
+                    className={`w-16 h-20 rounded border-2 overflow-hidden shrink-0 transition ${activeImg === i ? 'border-primary shadow' : 'border-gray-200 opacity-70 hover:opacity-100'}`}>
+                    <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Share row */}
             <div className="flex items-center justify-end gap-3 mt-3 text-sm text-gray-500">
@@ -338,7 +335,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Trust badges */}
-            <div className="flex gap-4 text-xs text-gray-500 pt-3 border-t">
+            <div className="flex flex-wrap gap-3 text-xs text-gray-500 pt-3 border-t">
               <span className="flex items-center gap-1"><FiTruck size={13} className="text-primary" /> Free Shipping</span>
               <span className="flex items-center gap-1"><FiRefreshCw size={13} className="text-primary" /> 7-Day Returns</span>
               <span className="flex items-center gap-1"><FiShield size={13} className="text-primary" /> 100% Genuine</span>

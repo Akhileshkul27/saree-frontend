@@ -54,32 +54,32 @@ export default function CartPage() {
   )
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-display font-bold text-gray-900 mb-8">Shopping Cart ({items.length} items)</h1>
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-6 sm:mb-8">Shopping Cart ({items.length} items)</h1>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-5 sm:gap-8">
         {/* Cart Items */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-3 sm:space-y-4">
           {items.map((item) => (
-            <motion.div key={item.id} layout className="bg-white rounded-xl p-4 shadow-sm flex gap-4">
-              <Link to={`/product/${item.productId}`} className="w-24 h-32 rounded-lg overflow-hidden shrink-0 bg-gray-100">
+            <motion.div key={item.id} layout className="bg-white rounded-xl p-3 sm:p-4 shadow-sm flex gap-3 sm:gap-4">
+              <Link to={`/product/${item.productId}`} className="w-20 h-28 sm:w-24 sm:h-32 rounded-lg overflow-hidden shrink-0 bg-gray-100">
                 <img src={item.imageUrl || '/placeholder-saree.jpg'} alt={item.productName} className="w-full h-full object-cover" />
               </Link>
-              <div className="flex-1">
-                <Link to={`/product/${item.productId}`} className="font-display font-semibold text-gray-900 hover:text-primary transition line-clamp-1">{item.productName}</Link>
+              <div className="flex-1 min-w-0">
+                <Link to={`/product/${item.productId}`} className="font-display font-semibold text-gray-900 hover:text-primary transition line-clamp-2 text-sm sm:text-base block">{item.productName}</Link>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-primary font-bold">₹{item.sellingPrice?.toLocaleString('en-IN')}</span>
-                  {item.discountPercent > 0 && <span className="text-sm text-gray-400 line-through">₹{item.basePrice?.toLocaleString('en-IN')}</span>}
+                  <span className="text-primary font-bold text-sm sm:text-base">₹{item.sellingPrice?.toLocaleString('en-IN')}</span>
+                  {item.discountPercent > 0 && <span className="text-xs sm:text-sm text-gray-400 line-through">₹{item.basePrice?.toLocaleString('en-IN')}</span>}
                 </div>
-                <div className="flex items-center justify-between mt-3">
+                <div className="flex items-center justify-between mt-2 sm:mt-3">
                   <div className="flex items-center border rounded-lg">
-                    <button onClick={() => handleQtyChange(item.id, item.quantity - 1)} className="px-3 py-1.5 hover:bg-gray-50"><FiMinus size={14} /></button>
-                    <span className="px-3 py-1.5 border-x text-sm font-medium">{item.quantity}</span>
-                    <button onClick={() => handleQtyChange(item.id, item.quantity + 1)} className="px-3 py-1.5 hover:bg-gray-50"><FiPlus size={14} /></button>
+                    <button onClick={() => handleQtyChange(item.id, item.quantity - 1)} className="px-2 sm:px-3 py-1 sm:py-1.5 hover:bg-gray-50"><FiMinus size={12} /></button>
+                    <span className="px-2 sm:px-3 py-1 sm:py-1.5 border-x text-sm font-medium">{item.quantity}</span>
+                    <button onClick={() => handleQtyChange(item.id, item.quantity + 1)} className="px-2 sm:px-3 py-1 sm:py-1.5 hover:bg-gray-50"><FiPlus size={12} /></button>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="font-bold text-gray-900">₹{item.totalPrice?.toLocaleString('en-IN')}</span>
-                    <button onClick={() => handleRemove(item.id)} className="text-red-500 hover:bg-red-50 p-2 rounded-lg transition"><FiTrash2 size={16} /></button>
+                  <div className="flex items-center gap-2 sm:gap-4">
+                    <span className="font-bold text-gray-900 text-sm sm:text-base">₹{item.totalPrice?.toLocaleString('en-IN')}</span>
+                    <button onClick={() => handleRemove(item.id)} className="text-red-500 hover:bg-red-50 p-1.5 sm:p-2 rounded-lg transition"><FiTrash2 size={14} /></button>
                   </div>
                 </div>
               </div>

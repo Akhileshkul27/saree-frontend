@@ -76,17 +76,17 @@ export default function ProductCard({ product }) {
         </div>
 
         {/* Info */}
-        <div className="p-4">
-          <p className="text-xs text-primary font-medium uppercase tracking-wider mb-1">{product.categoryName}</p>
-          <h3 className="font-display font-semibold text-gray-900 text-sm leading-snug mb-2 line-clamp-2 group-hover:text-primary transition">
+        <div className="p-2.5 sm:p-4">
+          <p className="text-xs text-primary font-medium uppercase tracking-wider mb-0.5 sm:mb-1 truncate">{product.categoryName}</p>
+          <h3 className="font-display font-semibold text-gray-900 text-xs sm:text-sm leading-snug mb-1 sm:mb-2 line-clamp-2 group-hover:text-primary transition">
             {product.name}
           </h3>
 
           {/* Rating */}
           {product.averageRating > 0 && (
-            <div className="flex items-center gap-1 mb-2">
+            <div className="flex items-center gap-1 mb-1 sm:mb-2">
               {[...Array(5)].map((_, i) => (
-                <FiStar key={i} size={12}
+                <FiStar key={i} size={10}
                   className={i < Math.round(product.averageRating) ? 'text-gold fill-gold' : 'text-gray-300'} />
               ))}
               <span className="text-xs text-gray-500 ml-1">({product.reviewCount})</span>
@@ -94,15 +94,15 @@ export default function ProductCard({ product }) {
           )}
 
           {/* Price */}
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-primary">₹{product.sellingPrice?.toLocaleString('en-IN')}</span>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-sm sm:text-lg font-bold text-primary">₹{product.sellingPrice?.toLocaleString('en-IN')}</span>
             {product.discountPercent > 0 && (
-              <span className="text-sm text-gray-400 line-through">₹{product.basePrice?.toLocaleString('en-IN')}</span>
+              <span className="text-xs text-gray-400 line-through">₹{product.basePrice?.toLocaleString('en-IN')}</span>
             )}
           </div>
 
           {/* Fabric */}
-          <p className="text-xs text-gray-500 mt-1">{product.fabricType} • {product.color}</p>
+          <p className="text-xs text-gray-500 mt-0.5 truncate">{product.fabricType} • {product.color}</p>
         </div>
       </Link>
     </motion.div>

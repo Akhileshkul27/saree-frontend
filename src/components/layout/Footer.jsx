@@ -5,22 +5,22 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300 mt-16">
       {/* Newsletter */}
-      <div className="gradient-primary py-10">
+      <div className="gradient-primary py-8 sm:py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-2xl font-display font-bold text-white mb-2">Stay Graceful, Stay Updated</h3>
-          <p className="text-white/80 mb-6">Subscribe for exclusive offers and new collection alerts</p>
-          <form className="flex max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+          <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">Stay Graceful, Stay Updated</h3>
+          <p className="text-white/80 mb-4 sm:mb-6 text-sm sm:text-base">Subscribe for exclusive offers and new collection alerts</p>
+          <form className="flex flex-col sm:flex-row max-w-md mx-auto gap-2 sm:gap-0" onSubmit={(e) => e.preventDefault()}>
             <input type="email" placeholder="Your email address"
-              className="flex-1 px-4 py-3 rounded-l-full text-gray-900 outline-none" />
-            <button className="bg-gold text-gray-900 font-semibold px-6 py-3 rounded-r-full hover:bg-gold-light transition">
+              className="flex-1 px-4 py-3 sm:rounded-l-full sm:rounded-r-none rounded-full text-gray-900 outline-none" />
+            <button className="bg-gold text-gray-900 font-semibold px-6 py-3 sm:rounded-r-full sm:rounded-l-none rounded-full hover:bg-gold-light transition">
               Subscribe
             </button>
           </form>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-10">
           {/* Brand */}
           <div>
             <h2 className="text-2xl font-display font-bold text-gradient mb-4">SareeGrace</h2>

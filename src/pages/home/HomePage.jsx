@@ -54,25 +54,25 @@ export default function HomePage() {
       {/* ═══════ Hero Banner ═══════ */}
       <section className="relative gradient-primary overflow-hidden">
         <div className="saree-pattern absolute inset-0 opacity-30" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative">
-          <div className="grid md:grid-cols-2 gap-10 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 relative">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
             <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }}>
-              <span className="inline-block bg-gold/20 text-gold-light text-sm font-medium px-4 py-1.5 rounded-full mb-4">
+              <span className="inline-block bg-gold/20 text-gold-light text-xs sm:text-sm font-medium px-3 py-1 sm:px-4 sm:py-1.5 rounded-full mb-3 sm:mb-4">
                 New Collection 2026
               </span>
-              <h1 className="text-4xl md:text-6xl font-display font-bold text-white leading-tight mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white leading-tight mb-4 sm:mb-6">
                 Drape Yourself in <span className="text-gold-light">Timeless</span> Elegance
               </h1>
-              <p className="text-white/80 text-lg mb-8 max-w-lg">
+              <p className="text-white/80 text-sm sm:text-lg mb-6 sm:mb-8 max-w-lg">
                 Discover exquisite handcrafted sarees from the finest weavers of India. From Banarasi silk to Kanchipuram, every piece tells a story.
               </p>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-3">
                 <Link to="/shop"
-                  className="bg-white text-primary font-semibold px-8 py-3.5 rounded-full hover:bg-gold hover:text-gray-900 transition inline-flex items-center gap-2">
+                  className="bg-white text-primary font-semibold px-6 sm:px-8 py-3 sm:py-3.5 rounded-full hover:bg-gold hover:text-gray-900 transition inline-flex items-center gap-2 text-sm sm:text-base">
                   Shop Now <FiArrowRight />
                 </Link>
                 <Link to="/shop?isSpecialOffer=true"
-                  className="border-2 border-white text-white font-semibold px-8 py-3.5 rounded-full hover:bg-white hover:text-primary transition">
+                  className="border-2 border-white text-white font-semibold px-6 sm:px-8 py-3 sm:py-3.5 rounded-full hover:bg-white hover:text-primary transition text-sm sm:text-base">
                   Special Offers
                 </Link>
               </div>
@@ -102,16 +102,16 @@ export default function HomePage() {
 
       {/* ═══════ Features Bar ═══════ */}
       <section className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
             {features.map((f, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <f.icon size={22} className="text-primary" />
+              <div key={i} className="flex items-center gap-2 sm:gap-3">
+                <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <f.icon size={18} className="text-primary" />
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-gray-900">{f.title}</p>
-                  <p className="text-xs text-gray-500">{f.desc}</p>
+                  <p className="font-semibold text-xs sm:text-sm text-gray-900">{f.title}</p>
+                  <p className="text-xs text-gray-500 hidden sm:block">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -121,12 +121,12 @@ export default function HomePage() {
 
       {/* ═══════ Categories ═══════ */}
       {categories.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-display font-bold text-gray-900">Shop by Category</h2>
-            <p className="text-gray-500 mt-2">Explore our curated collection of Indian sarees</p>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+          <div className="text-center mb-6 sm:mb-10">
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900">Shop by Category</h2>
+            <p className="text-gray-500 mt-2 text-sm sm:text-base">Explore our curated collection of Indian sarees</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
             {categories.slice(0, 10).map((cat) => (
               <Link key={cat.id} to={`/shop?categoryId=${cat.id}`}
                 className="group relative rounded-xl overflow-hidden aspect-[3/4] bg-gray-100 shadow hover:shadow-xl transition">
@@ -134,11 +134,11 @@ export default function HomePage() {
                   <img src={cat.imageUrl} alt={cat.name} className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/10 to-gold/10 flex items-center justify-center">
-                    <span className="text-4xl">🧶</span>
+                    <span className="text-2xl sm:text-4xl">🧶</span>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
-                  <h3 className="text-white font-display font-semibold text-sm">{cat.name}</h3>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2 sm:p-4">
+                  <h3 className="text-white font-display font-semibold text-xs sm:text-sm leading-tight">{cat.name}</h3>
                 </div>
               </Link>
             ))}
@@ -147,37 +147,37 @@ export default function HomePage() {
       )}
 
       {/* ═══════ Featured Products ═══════ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex justify-between items-center mb-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+        <div className="flex justify-between items-center mb-6 sm:mb-8">
           <div>
-            <h2 className="text-3xl font-display font-bold text-gray-900">Featured Sarees</h2>
-            <p className="text-gray-500 mt-1">Handpicked for you</p>
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900">Featured Sarees</h2>
+            <p className="text-gray-500 mt-1 text-sm">Handpicked for you</p>
           </div>
-          <Link to="/shop?isFeatured=true" className="text-primary font-medium text-sm hover:underline inline-flex items-center gap-1">
+          <Link to="/shop?isFeatured=true" className="text-primary font-medium text-sm hover:underline inline-flex items-center gap-1 shrink-0">
             View All <FiArrowRight />
           </Link>
         </div>
         {loading ? <LoadingSpinner /> : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             {featured.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         )}
       </section>
 
       {/* ═══════ Special Offers Banner ═══════ */}
-      <section className="bg-gradient-to-r from-burgundy to-primary-dark py-16">
+      <section className="bg-gradient-to-r from-burgundy to-primary-dark py-10 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <span className="inline-block bg-gold/20 text-gold-light text-sm font-medium px-4 py-1.5 rounded-full mb-3">Limited Time</span>
-            <h2 className="text-3xl font-display font-bold text-white">Special Offers</h2>
-            <p className="text-white/70 mt-2">Exclusive discounts on premium sarees</p>
+          <div className="text-center mb-6 sm:mb-10">
+            <span className="inline-block bg-gold/20 text-gold-light text-xs sm:text-sm font-medium px-3 py-1 sm:px-4 sm:py-1.5 rounded-full mb-3">Limited Time</span>
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-white">Special Offers</h2>
+            <p className="text-white/70 mt-2 text-sm">Exclusive discounts on premium sarees</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
             {specialOffers.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
-          <div className="text-center mt-8">
+          <div className="text-center mt-6 sm:mt-8">
             <Link to="/shop?isSpecialOffer=true"
-              className="inline-flex items-center gap-2 bg-gold text-gray-900 font-semibold px-8 py-3 rounded-full hover:bg-gold-light transition">
+              className="inline-flex items-center gap-2 bg-gold text-gray-900 font-semibold px-6 sm:px-8 py-3 rounded-full hover:bg-gold-light transition text-sm sm:text-base">
               View All Offers <FiArrowRight />
             </Link>
           </div>
@@ -186,35 +186,35 @@ export default function HomePage() {
 
       {/* ═══════ New Arrivals ═══════ */}
       {newArrivals.length > 0 && (
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex justify-between items-center mb-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+        <div className="flex justify-between items-center mb-6 sm:mb-8">
           <div>
-            <h2 className="text-3xl font-display font-bold text-gray-900">New Arrivals</h2>
-            <p className="text-gray-500 mt-1">Fresh from the loom</p>
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900">New Arrivals</h2>
+            <p className="text-gray-500 mt-1 text-sm">Fresh from the loom</p>
           </div>
-          <Link to="/new-arrivals" className="text-primary font-medium text-sm hover:underline inline-flex items-center gap-1">
+          <Link to="/new-arrivals" className="text-primary font-medium text-sm hover:underline inline-flex items-center gap-1 shrink-0">
             View All <FiArrowRight />
           </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
           {newArrivals.map((p) => <ProductCard key={p.id} product={p} />)}
         </div>
       </section>
       )}
 
       {/* ═══════ Trust Badges ═══════ */}
-      <section className="bg-white py-12 border-t">
+      <section className="bg-white py-10 sm:py-12 border-t">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-display font-bold text-gray-900 mb-8">Why Choose SareeGrace?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <h2 className="text-xl sm:text-2xl font-display font-bold text-gray-900 mb-6 sm:mb-8">Why Choose SareeGrace?</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-8">
             {[
               { emoji: '🏆', title: 'Authentic Handlooms', desc: 'Direct from weavers, every saree is authentic with a quality guarantee.' },
               { emoji: '💰', title: 'Best Prices', desc: 'No middlemen. Get premium sarees at the most competitive prices.' },
               { emoji: '🎁', title: 'Beautiful Packaging', desc: 'Every order comes in elegant gift-ready packaging.' },
             ].map((item, i) => (
-              <div key={i} className="p-6 rounded-xl bg-cream">
-                <span className="text-4xl mb-4 block">{item.emoji}</span>
-                <h3 className="font-display font-semibold text-lg text-gray-900 mb-2">{item.title}</h3>
+              <div key={i} className="p-5 sm:p-6 rounded-xl bg-cream">
+                <span className="text-3xl sm:text-4xl mb-3 sm:mb-4 block">{item.emoji}</span>
+                <h3 className="font-display font-semibold text-base sm:text-lg text-gray-900 mb-2">{item.title}</h3>
                 <p className="text-sm text-gray-500">{item.desc}</p>
               </div>
             ))}

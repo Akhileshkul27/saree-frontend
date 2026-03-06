@@ -21,6 +21,14 @@ body {
   font-family: var(--font-body);
   background-color: var(--color-cream);
   color: #1a1a1a;
+  /* Prevent content from overflowing horizontal on mobile */
+  overflow-x: hidden;
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar { display: none; }
+  button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 h1, h2, h3, h4, h5, h6 {
