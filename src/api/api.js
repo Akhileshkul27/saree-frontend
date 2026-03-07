@@ -94,6 +94,12 @@ export const ordersAPI = {
   cancel: (orderId) => API.post(`/orders/${orderId}/cancel`),
 }
 
+// ──────── Payments API ────────
+export const paymentsAPI = {
+  createRazorpayOrder: (data) => API.post('/payments/create-razorpay-order', data),
+  verify: (data) => API.post('/payments/verify', data),
+}
+
 // ──────── Addresses API ────────
 export const addressesAPI = {
   getAll: () => API.get('/addresses'),

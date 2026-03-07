@@ -3,9 +3,19 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { FiMapPin, FiPlus } from 'react-icons/fi'
 import toast from 'react-hot-toast'
-import { addressesAPI, ordersAPI } from '../../api/api'
+import { addressesAPI, ordersAPI, paymentsAPI } from '../../api/api'
 import { clearCartState } from '../../store/cartSlice'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
+
+const loadRazorpayScript = () =>
+  new Promise((resolve) => {
+    if (window.Razorpay) { resolve(true); return }
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.onload = () => resolve(true)
+    script.onerror = () => resolve(false)
+    document.body.appendChild(script)
+  })
 
 export default function CheckoutPage() {
   const navigate = useNavigate()
@@ -15,7 +25,7 @@ export default function CheckoutPage() {
 
   const [addresses, setAddresses] = useState([])
   const [selectedAddr, setSelectedAddr] = useState(null)
-  const [paymentMethod, setPaymentMethod] = useState('COD')
+  const [paymentMethod, setPaymentMethod] = useState('Razorpay')
   const [coupon, setCoupon] = useState('')
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(true)
@@ -60,19 +70,89 @@ export default function CheckoutPage() {
     if (!selectedAddr) { toast.error('Select a delivery address'); return }
     setPlacing(true)
     try {
-      const { data } = await ordersAPI.create({
-        shippingAddressId: selectedAddr,
-        paymentMethod,
-        couponCode: coupon || null,
-        notes: notes || null,
-      })
-      if (data.success) {
-        toast.success('Order placed successfully! 🎉')
-        dispatch(clearCartState())
-        navigate(`/orders/${data.data.id}`)
-      } else toast.error(data.message)
-    } catch (err) { toast.error(err.response?.data?.message || 'Failed to place order') }
-    setPlacing(false)
+      if (paymentMethod === 'COD') {
+        const { data } = await ordersAPI.create({
+          shippingAddressId: selectedAddr,
+          paymentMethod: 'COD',
+          couponCode: coupon || null,
+          notes: notes || null,
+        })
+        if (data.success) {
+          toast.success('Order placed! We\'ll collect payment on delivery 🎉')
+          dispatch(clearCartState())
+          navigate(`/orders/${data.data.id}`)
+        } else toast.error(data.message)
+        setPlacing(false)
+      } else {
+        // Razorpay online payment flow
+        const loaded = await loadRazorpayScript()
+        if (!loaded) {
+          toast.error('Failed to load payment gateway. Check your internet connection.')
+          setPlacing(false)
+          return
+        }
+
+        const { data: rpData } = await paymentsAPI.createRazorpayOrder({ amount: total })
+        if (!rpData.success) {
+          toast.error(rpData.message || 'Could not initiate payment')
+          setPlacing(false)
+          return
+        }
+
+        const options = {
+          key: rpData.data.keyId,
+          amount: rpData.data.amount,
+          currency: rpData.data.currency,
+          name: 'SareeGrace',
+          description: 'Buy Beautiful Sarees',
+          order_id: rpData.data.razorpayOrderId,
+          handler: async (response) => {
+            try {
+              const { data: verifyData } = await paymentsAPI.verify({
+                razorpayOrderId: response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+                shippingAddressId: selectedAddr,
+                couponCode: coupon || null,
+                notes: notes || null,
+              })
+              if (verifyData.success) {
+                toast.success('Payment successful! Order placed 🎉')
+                dispatch(clearCartState())
+                navigate(`/orders/${verifyData.data.id}`)
+              } else {
+                toast.error(verifyData.message || 'Payment verification failed')
+              }
+            } catch {
+              toast.error('Payment verification failed. Please contact support.')
+            }
+            setPlacing(false)
+          },
+          prefill: {
+            name: user?.fullName || '',
+            email: user?.email || '',
+          },
+          theme: { color: '#8B5CF6' },
+          modal: {
+            ondismiss: () => {
+              toast('Payment cancelled', { icon: '❌' })
+              setPlacing(false)
+            },
+          },
+        }
+
+        const rzp = new window.Razorpay(options)
+        rzp.on('payment.failed', (response) => {
+          toast.error(`Payment failed: ${response.error.description}`)
+          setPlacing(false)
+        })
+        rzp.open()
+        // setPlacing(false) is handled inside handler / ondismiss
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Something went wrong. Please try again.')
+      setPlacing(false)
+    }
   }
 
   const shipping = subTotal >= 999 ? 0 : 79
@@ -129,13 +209,35 @@ export default function CheckoutPage() {
           <div className="bg-white rounded-xl p-6 shadow-sm">
             <h3 className="font-display font-semibold text-lg mb-4">Payment Method</h3>
             <div className="space-y-3">
-              {[['COD', 'Cash on Delivery', '💰'], ['UPI', 'UPI / Google Pay / PhonePe', '📱'], ['Card', 'Credit / Debit Card', '💳']].map(([val, label, icon]) => (
-                <label key={val} className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition ${paymentMethod === val ? 'border-primary bg-primary/5' : 'border-gray-200'}`}>
-                  <input type="radio" name="payment" value={val} checked={paymentMethod === val} onChange={(e) => setPaymentMethod(e.target.value)} />
-                  <span className="text-xl">{icon}</span>
-                  <span className="font-medium text-sm">{label}</span>
-                </label>
-              ))}
+
+              {/* Razorpay Online */}
+              <label className={`flex items-start gap-3 p-4 rounded-lg border-2 cursor-pointer transition ${paymentMethod === 'Razorpay' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}>
+                <input type="radio" name="payment" value="Razorpay" checked={paymentMethod === 'Razorpay'} onChange={(e) => setPaymentMethod(e.target.value)} className="mt-1" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">📱</span>
+                    <span className="font-semibold text-sm">Pay Online</span>
+                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Recommended</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">UPI · Google Pay · PhonePe · Paytm · Credit Card · Debit Card · Net Banking</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/512px-Google_Pay_Logo.svg.png" alt="GPay" className="h-5 object-contain" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png" alt="PhonePe" className="h-5 object-contain" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/512px-UPI-Logo-vector.svg.png" alt="UPI" className="h-4 object-contain" />
+                  </div>
+                </div>
+              </label>
+
+              {/* Cash on Delivery */}
+              <label className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition ${paymentMethod === 'COD' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}>
+                <input type="radio" name="payment" value="COD" checked={paymentMethod === 'COD'} onChange={(e) => setPaymentMethod(e.target.value)} />
+                <span className="text-xl">💰</span>
+                <div>
+                  <span className="font-semibold text-sm">Cash on Delivery</span>
+                  <p className="text-xs text-gray-500">Pay when your order arrives</p>
+                </div>
+              </label>
+
             </div>
           </div>
 
@@ -176,7 +278,7 @@ export default function CheckoutPage() {
           </div>
           <button onClick={handlePlaceOrder} disabled={placing}
             className="w-full bg-primary text-white font-semibold py-3 rounded-lg mt-6 hover:bg-primary-dark transition disabled:opacity-50">
-            {placing ? 'Placing Order...' : 'Place Order'}
+            {placing ? 'Processing...' : paymentMethod === 'COD' ? 'Place Order' : 'Proceed to Pay ₹' + total?.toLocaleString('en-IN')}
           </button>
         </div>
       </div>
