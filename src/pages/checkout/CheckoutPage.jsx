@@ -155,7 +155,7 @@ export default function CheckoutPage() {
     }
   }
 
-  const shipping = subTotal >= 999 ? 0 : 79
+  const shipping = subTotal >= 999 ? 0 : 0
   const total = subTotal + shipping
 
   if (loading) return <LoadingSpinner text="Loading checkout..." />

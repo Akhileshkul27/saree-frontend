@@ -28,7 +28,7 @@ export default function CartPage() {
     toast.success('Removed from cart')
   }
 
-  const shipping = subTotal >= 999 ? 0 : 79
+  const shipping = subTotal >= 999 ? 0 : 0
   const total = subTotal + shipping
 
   if (!user) return (
