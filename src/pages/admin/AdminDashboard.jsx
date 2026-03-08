@@ -491,7 +491,10 @@ function DashboardTab() {
                 {stats.recentOrders.map((o) => (
                   <tr key={o.id} className="hover:bg-gray-50">
                     <td className="py-3 font-medium text-primary">{o.orderNumber}</td>
-                    <td className="py-3">{o.customerName}</td>
+                    <td className="py-3">
+                      <div>{o.customerName}</div>
+                      <div className="text-xs text-gray-400">{o.customerEmail}</div>
+                    </td>
                     <td className="py-3 font-medium">₹{o.totalAmount?.toLocaleString('en-IN')}</td>
                     <td className="py-3"><span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{o.orderStatus}</span></td>
                     <td className="py-3 text-gray-500">{new Date(o.createdAt).toLocaleDateString('en-IN')}</td>
@@ -1436,7 +1439,10 @@ function OrdersTab() {
                 {orders.map((o) => (
                   <tr key={o.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 font-medium">{o.orderNumber}</td>
-                    <td className="px-4 py-3">{o.customerName}</td>
+                    <td className="px-4 py-3">
+                      <div>{o.customerName}</div>
+                      <div className="text-xs text-gray-400">{o.customerEmail}</div>
+                    </td>
                     <td className="px-4 py-3 font-medium">₹{o.totalAmount?.toLocaleString('en-IN')}</td>
                     <td className="px-4 py-3 text-gray-600">{o.paymentMethod}</td>
                     <td className="px-4 py-3">
