@@ -53,9 +53,9 @@ const EXCEL_COLUMNS = [
 
 const TEMPLATE_SAMPLE = [
   ['Kanjivaram Silk Saree', 'Silk Sarees', 4500, 25, 'Elegant Kanjivaram silk', 'Full description here', 10,
-   'Silk', 'Red', 'Zari', 'Wedding', 5.5, 1.1, 'TRUE', 0.8, 'Dry clean only', 650, 'FALSE',
+   'Silk', 'Red', 'Zari', 'Wedding', 5.5, 1.1, 'TRUE', 0.8, 'Dry clean only', 650, 'FALSE', 'FALSE',
    new Date().toISOString().slice(0, 10),
-   '/images/saree1.jpg', '/images/saree1-back.jpg', '', '', '', '', '', '', '', ''],
+   'R1.jpg', 'R2.jpg', '', '', '', '', '', '', '', ''],
 ]
 
 function downloadTemplate() {
@@ -185,7 +185,10 @@ function BulkImportModal({ categories, onDone, onClose }) {
   const [importing, setImporting] = useState(false)
   const [result, setResult] = useState(null)
   const [dragOver, setDragOver] = useState(false)
+  const [zipFile, setZipFile] = useState(null)
+  const [zipDragOver, setZipDragOver] = useState(false)
   const fileInputRef = useRef()
+  const zipInputRef = useRef()
 
   const handleFile = async (file) => {
     if (!file) return
@@ -209,11 +212,28 @@ function BulkImportModal({ categories, onDone, onClose }) {
     handleFile(e.dataTransfer.files[0])
   }
 
+  const handleZipFile = (file) => {
+    if (!file) return
+    if (!file.name.toLowerCase().endsWith('.zip')) {
+      toast.error('Please select a .zip archive for the images')
+      return
+    }
+    setZipFile(file)
+    toast.success(`📦 ${file.name} attached`)
+  }
+
   const handleImport = async () => {
     if (parsedRows.length === 0) return
     setImporting(true)
     try {
-      const { data } = await adminAPI.bulkCreateProducts(parsedRows)
+      let data
+      if (zipFile) {
+        const res = await adminAPI.bulkCreateProductsWithImages(parsedRows, zipFile)
+        data = res.data
+      } else {
+        const res = await adminAPI.bulkCreateProducts(parsedRows)
+        data = res.data
+      }
       setResult(data.data)
       setStep('result')
       if (data.data?.insertedCount > 0) onDone()
@@ -271,6 +291,45 @@ function BulkImportModal({ categories, onDone, onClose }) {
                   onChange={(e) => handleFile(e.target.files[0])} />
               </div>
 
+              {/* Step 3: Optional ZIP upload for images */}
+              <div className="mt-6">
+                <p className="font-semibold text-sm text-gray-700 mb-2">
+                  Step 3: <span className="font-normal text-gray-500">(Optional)</span> Upload a ZIP of product images
+                </p>
+                <p className="text-xs text-gray-400 mb-2">
+                  If your Image1–Image10 columns contain filenames (e.g. <code className="bg-gray-100 px-1 rounded">R1.jpg</code>), attach a .zip
+                  and the backend will match each filename and upload it to Azure Blob Storage automatically.
+                </p>
+                {zipFile ? (
+                  <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+                    <span className="text-green-600 text-lg">📦</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-green-800 truncate">{zipFile.name}</p>
+                      <p className="text-xs text-green-600">{(zipFile.size / 1024 / 1024).toFixed(1)} MB — images will be uploaded on import</p>
+                    </div>
+                    <button onClick={() => setZipFile(null)} className="text-green-600 hover:text-red-500 transition">
+                      <FiX size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition ${
+                      zipDragOver ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-green-400 hover:bg-green-50/40'
+                    }`}
+                    onDragOver={(e) => { e.preventDefault(); setZipDragOver(true) }}
+                    onDragLeave={() => setZipDragOver(false)}
+                    onDrop={(e) => { e.preventDefault(); setZipDragOver(false); handleZipFile(e.dataTransfer.files[0]) }}
+                    onClick={() => zipInputRef.current?.click()}
+                  >
+                    <span className="text-3xl">📦</span>
+                    <p className="font-medium text-gray-600 mt-2 text-sm">Drag & drop your images .zip here</p>
+                    <p className="text-xs text-gray-400 mt-1">or click to browse · .zip only · Max 5 MB per image</p>
+                    <input ref={zipInputRef} type="file" accept=".zip" className="hidden"
+                      onChange={(e) => handleZipFile(e.target.files[0])} />
+                  </div>
+                )}
+              </div>
+
               {/* Column reference */}
               <details className="mt-4 text-xs text-gray-500">
                 <summary className="cursor-pointer font-medium text-gray-600 hover:text-primary">View all supported columns</summary>
@@ -300,6 +359,17 @@ function BulkImportModal({ categories, onDone, onClose }) {
                 <button onClick={() => { setStep('upload'); setParsedRows([]); setParseErrors([]) }}
                   className="text-xs text-gray-500 hover:text-primary underline">← Upload different file</button>
               </div>
+
+              {/* Zip status banner (preview step) */}
+              {zipFile && (
+                <div className="mb-4 flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                  <span>📦</span>
+                  <p className="text-xs text-green-700 font-medium">
+                    <strong>{zipFile.name}</strong> attached — matching image filenames will be uploaded to Azure Blob Storage on import.
+                  </p>
+                  <button onClick={() => setZipFile(null)} className="ml-auto text-green-500 hover:text-red-500"><FiX size={13} /></button>
+                </div>
+              )}
 
               {/* Parse errors */}
               {parseErrors.length > 0 && (

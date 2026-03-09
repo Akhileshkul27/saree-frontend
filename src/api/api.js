@@ -144,6 +144,14 @@ export const adminAPI = {
     })
   },
   bulkCreateProducts: (rows) => API.post('/admin/products/bulk', rows),
+  bulkCreateProductsWithImages: (rows, zipFile) => {
+    const formData = new FormData()
+    formData.append('rows', JSON.stringify(rows))
+    if (zipFile) formData.append('images', zipFile)
+    return API.post('/admin/products/bulk-with-images', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
   approveReview: (reviewId) => API.put(`/admin/reviews/${reviewId}/approve`),
   deleteReview: (reviewId) => API.delete(`/admin/reviews/${reviewId}`),
 }
